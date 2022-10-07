@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react'
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+// Components
+import AppBar from './components/AppBar';
+import TransactionForm from './components/TransactionForm';
+import TransactionsList from './components/TransactionsList';
+
+
 
 
 function App() {
-
-  const [form, setForm] = useState({
-    amount: 0,
-    description: '',
-    date: ''
-  });
   const [transactions, setTransactions] = useState([]);
-
+  const [editTransaction, setEditTransaction] = useState({});
 
   useEffect(() => {
     fetchTransactions();
@@ -22,74 +24,22 @@ function App() {
     setTransactions(data);
   }
 
-  function handleInput(e) {
-    setForm({
-     ...form, [e.target.name]: e.target.value})
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    const res = await fetch('http://localhost:4000/transaction', {
-      method: 'POST',
-      body: JSON.stringify(form),
-      headers: {
-        "content-type": "application/json"
-      }
-    })
-    if (res.ok) {
-      // Page adds new transaction in realtime if response is successfull
-      fetchTransactions();
-    }
-  }
-
 
   return (
     <div className="App">
-      <form onSubmit={handleSubmit}>
-        <input 
-          type="number" 
-          name='amount'
-          value={form.amount}
-          onChange={handleInput} 
-          placeholder="Enter transaction amount" 
+      <AppBar />
+      <Container>
+        <TransactionForm 
+          fetchTransactions={fetchTransactions} 
+          editTransaction={editTransaction}
         />
-        <input 
-          type="text" 
-          name='description' 
-          value={form.description}
-          onChange={handleInput} 
-          placeholder="Enter transaction details" 
+        <TransactionsList 
+          transactions={transactions} 
+          fetchTransactions={fetchTransactions}
+          setEditTransaction={setEditTransaction}
         />
-        <input 
-          type="date" 
-          name='date'
-          value={form.date}
-          onChange={handleInput} 
-        />
-        <button type="submit">Submit</button>
-      </form>
+      </Container>
       <br/>
-      <section>
-        <table>
-          <thead>
-            <tr>
-            <th>Amount</th>
-            <th>Description</th>
-            <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((transaction) => (
-            <tr key={transaction._id}>
-              <td>{transaction.amount}</td>
-              <td>{transaction.description}</td>
-              <td>{transaction.data}</td>
-            </tr>
-            ))}
-          </tbody>
-        </table>
-
-      </section>
     </div>
   );
 }

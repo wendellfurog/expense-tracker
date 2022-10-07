@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 const transactionSchema = new Schema({
   amount: Number,
   description: String,
-  data: { type: Date, default: new Date },
+  date: { type: Date, default: new Date },
   createdAt: { type: Date, default: Date.now }
 });
 
